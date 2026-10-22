@@ -1,27 +1,37 @@
-Budgit — minimalist subscription and savings tracker
+BUDGIT - UPDATED PROJECT
 
-Files
+Files:
 - index.html: app structure
-- script.js: app logic and local data
-- sty.css: styling and responsive layout
-- fonts/: bundled Nexa Pro and Nexa Text Pro variable font files
+- script.js: application logic
+- sty.css: styling
+- fonts/: local Nexa Pro font files
 
-Run
-1. Extract the complete ZIP and keep the fonts folder beside the three app files.
-2. Open index.html directly, or use VS Code Live Server.
-3. Data is stored locally in this browser. Back up your browser data before clearing site storage.
+Run locally:
+1. Extract the complete project folder.
+2. Keep index.html, script.js, sty.css, and fonts/ together.
+3. Open index.html with VS Code Live Server for best results.
 
-Fixes in this update
-- Dashboard upcoming-payment and recent-transaction cards now use the selected subscription logo/image.
-- Subscription artwork is constrained to its icon container and uses object-fit: contain so very large/tall images do not overflow.
-- Dark-mode active/upcoming stat labels have explicit contrast and remain visible.
-- Currency changes trigger exchange-rate refresh for every subscription currency. Converted totals and list amounts use cached Frankfurter rates; if a rate is unavailable, the list shows the original currency rather than pretending a 1:1 conversion. Internet access is required for live exchange rates.
-- Savings check-ins support daily, weekly, and monthly intervals for both target goals and recurring habits. At the chosen time, while the app is open on the Savings tab, the user can answer YES/NO and enter the actual amount saved. Saved/spent amounts can also be logged at any time.
-- Nexa Pro and Nexa Text Pro fonts are bundled and loaded locally.
-- Settings credit: Created by Stephan Ngenda.
+Updates in this version:
+- Savings goal creation is split into focused popup steps.
+- Savings target dates and entry dates use Budgit's own in-app calendar (same one as the subscription renewal step), not the browser's.
+- Check-in time is chosen on an in-app analog clock: tap or drag the hour, then the minute.
+- Savings check-ins appear as a dimmed full-screen popup on whichever tab you are on when the reminder time is reached (while Budgit is open), with a 10-minute snooze.
+- Insights includes a monthly budget overview and subscription evaluator.
+- Subscription details includes an evaluator action.
+- Choosing “Save for it” (or starting a timer on a “Save for this purchase” result) creates a linked savings goal. Existing assessments already marked Saving are added automatically.
+- Budget label says “Money available”.
 
-Reminder note
-Browser timers only run while the app tab is open. The savings check-in will not pop up when the browser is fully closed.
+Notes:
+- Exchange rates require internet access. When rates cannot be retrieved, cross-currency totals may be unavailable rather than silently treating currencies as equal.
+- Reminder popups work while the app is open. Browser tabs that are fully closed cannot show in-app reminders.
+- Please test the new workflows in a browser before replacing your working copy. Back up your current data first.
+- Ensure your font files are used according to their licence.
 
-Font licence note
-The supplied font archive identifies the fonts as Demo / Trial. Review its licensing terms and obtain a suitable licence before commercial distribution.
+V5.2 additions:
+- Subscription files open in an in-app viewer (images, PDFs, text) with image thumbnails; nothing opens in a new tab.
+- Real logos in logos/ for Netflix, YouTube, Disney+, McDonald's, Spotify, Apple and Prime.
+- Subs tab icon is a calendar with a loop; Decide tab icon is a question mark in a circle.
+- Subscriptions can be filtered by category/status and sorted.
+- Decide asks for the normal price on discounts, and the product count and per-product worth on bundles.
+- Decision engine scores each purchase 0-100 using need, importance, how long you've wanted it, affordability, deal quality and credit use.
+- Monthly budget tracker (add purchase / add savings) and spending-trend charts on Insights.

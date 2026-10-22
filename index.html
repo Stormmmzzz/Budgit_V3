@@ -110,6 +110,12 @@
       <input type="text" placeholder="Search subscriptions..." id="sub-search" oninput="renderSubs()">
     </div>
 
+    <div class="sub-filters">
+      <select id="sub-cat" class="form-input" onchange="renderSubs()" aria-label="Filter by category"><option value="">All categories</option></select>
+      <select id="sub-status" class="form-input" onchange="renderSubs()" aria-label="Filter by status"><option value="">Any status</option><option value="active">Active</option><option value="paused">Paused</option><option value="cancelled">Cancelled</option></select>
+      <select id="sub-sort" class="form-input" onchange="renderSubs()" aria-label="Sort subscriptions"><option value="renewal">Next renewal</option><option value="price-high">Price: high to low</option><option value="price-low">Price: low to high</option><option value="name">Name A to Z</option><option value="newest">Recently added</option></select>
+    </div>
+
     <div class="sub-list" id="sub-list"></div>
   </div>
 
@@ -143,6 +149,29 @@
     <div class="header">
       <div class="header-left">
         <div class="greeting-name" style="font-size:22px">Stats & Insights</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="insight-card" id="budget-tracker-card">
+        <div class="insight-title">Monthly budget</div>
+        <div id="budget-tracker"></div>
+        <button class="btn btn-secondary" onclick="openBudgetModal()">Adjust budget</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="insight-card">
+        <div class="insight-title">Subscription evaluator</div>
+        <p class="modal-copy">Check whether a subscription is worth keeping based on price and how often you use it.</p>
+        <div id="subscription-evaluator"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="insight-card">
+        <div class="insight-title">Spending Trends</div>
+        <div id="trend-charts"></div>
       </div>
     </div>
 
@@ -278,11 +307,11 @@
       <div class="nav-label">Home</div>
     </div>
     <div class="nav-item" data-tab="subs" onclick="switchTab('subs')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7.5 12 3l9 4.5v11L12 23l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v11"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="14" height="14" rx="2"/><path d="M3 9h14M7 2.5v3M13 2.5v3"/><path d="M20.6 14.4a4.2 4.2 0 1 0 .3 3.6"/><path d="M21.2 12.4v2.4h-2.4"/></svg>
       <div class="nav-label">Subs</div>
     </div>
     <div class="nav-item" data-tab="decide" onclick="switchTab('decide')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12m-8.48 8.48-2.12 2.12"/><circle cx="12" cy="12" r="6"/><path d="m10 12 1.4 1.4L14.5 10"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.1 9.2a3 3 0 0 1 5.8 1c0 2-2.9 2.4-2.9 4.3" stroke-linecap="round"/><path d="M12 17.6h.01" stroke-linecap="round" stroke-width="2.6"/></svg>
       <div class="nav-label">Decide</div>
     </div>
     <div class="nav-item" data-tab="insights" onclick="switchTab('insights')">
@@ -319,6 +348,11 @@
 <!-- List popup -->
 <div class="list-popup" id="list-popup" onclick="closeListPopup(event)">
   <div class="list-popup-content" id="list-popup-content" onclick="event.stopPropagation()"></div>
+</div>
+
+<!-- Savings check-in popup: global layer, sits above every tab and modal -->
+<div class="checkin-overlay" id="checkin-overlay" role="dialog" aria-modal="true" aria-label="Savings check-in">
+  <div class="checkin-card" id="checkin-card"></div>
 </div>
 
 <!-- Toast -->

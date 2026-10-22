@@ -1360,3 +1360,77 @@ body { font-family: 'Nexa Text Pro', 'Nexa Pro', -apple-system, BlinkMacSystemFo
 .nav-item.active { color:#69d620; }
 .nav-item.active svg, .nav-item.active .nav-label { color:#69d620; }
 .form-input:focus, .search-bar input:focus { border-color:#69d620; }
+
+
+/* Savings time wheel, in-app check-ins, budget tracker and evaluator */
+.time-picker{display:flex;align-items:end;justify-content:center;gap:12px;padding:14px;background:var(--surface2,var(--bg2));border:1px solid var(--border);border-radius:16px}.time-wheel{display:flex;flex-direction:column;gap:7px;width:112px}.time-wheel label{font-size:11px;color:var(--text2);text-align:center;text-transform:uppercase;letter-spacing:.06em}.time-wheel-select{text-align:center;font-size:20px;font-weight:700;min-height:52px}.time-colon{font-size:24px;font-weight:800;padding-bottom:12px;color:var(--text)}.checkin-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}.budget-summary{display:grid;gap:12px;margin:12px 0}.budget-summary-line{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;color:var(--text2)}.budget-summary-line strong{font-size:15px;color:var(--text)}.evaluator-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}.evaluator-row:last-child{border-bottom:0}.evaluation-score{font-size:54px;font-weight:800;letter-spacing:-.05em;text-align:center;margin:20px 0;color:var(--accent)}.evaluation-score small{font-size:16px;color:var(--text2);letter-spacing:0}.savings-checkin{animation:checkinIn .22s ease-out}@keyframes checkinIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Savings clock wheel and subscription evaluation polish */
+.time-picker{display:flex;align-items:center;justify-content:center;gap:14px;padding:16px;background:var(--surface2,rgba(127,127,127,.07));border:1px solid var(--border);border-radius:18px}
+.time-wheel{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:88px}.time-wheel label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--text2);font-weight:700}
+.time-wheel-select{appearance:none;text-align:center;font-size:28px!important;font-weight:800!important;min-width:86px;padding:12px 8px!important;border-radius:14px!important;cursor:pointer}.time-colon{font-size:28px;font-weight:800;color:var(--accent)}
+.eval-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}.eval-row:last-child{border-bottom:0}
+.savings-checkin{padding:18px;border:1px solid var(--border);border-radius:18px;background:var(--surface)}
+
+
+/* ============ V5.2: in-app clock, calendar extras, global check-in popup ============ */
+.toast { z-index: 600; }
+.cal-day:disabled { opacity: .28; cursor: not-allowed; }
+.cal-clear { display: block; width: 100%; margin: -4px 0 12px; background: none; border: none; color: var(--text2); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; padding: 8px; }
+.date-field { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--card); color: var(--text); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-align: left; }
+.date-field svg { color: var(--accent-dark); flex: none; }
+.se-cal-wrap { margin-top: 10px; }
+.se-cal-wrap[hidden] { display: none; }
+
+/* clock */
+.clock-picker { background: var(--bg); border-radius: 20px; padding: 14px 14px 10px; }
+.clock-readout { display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 10px; }
+.clock-seg { min-width: 74px; padding: 6px 10px; border: none; border-radius: 14px; background: transparent; color: var(--text2); font: inherit; font-size: 40px; font-weight: 800; line-height: 1.1; cursor: pointer; font-variant-numeric: tabular-nums; }
+.clock-seg.active { background: var(--accent-light); color: var(--text); }
+.clock-colon { font-size: 36px; font-weight: 800; color: var(--text2); }
+.clock-ampm { display: flex; flex-direction: column; gap: 4px; margin-left: 10px; }
+.clock-ampm button { padding: 6px 11px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); color: var(--text2); font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+.clock-ampm button.active { background: var(--accent); border-color: var(--accent); color: #17220f; }
+.clock-dial { width: min(236px, 100%); aspect-ratio: 1; margin: 0 auto; touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer; }
+.clock-dial svg { width: 100%; height: 100%; display: block; }
+.clock-face { fill: var(--card); }
+.clock-hand { stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; }
+.clock-center { fill: var(--accent); }
+.clock-sel { fill: var(--accent); }
+.clock-num { fill: var(--text); font-family: inherit; font-size: 15px; font-weight: 700; pointer-events: none; }
+.clock-num.on { fill: #17220f; }
+.clock-hint { text-align: center; font-size: 12px; color: var(--text2); margin-top: 8px; }
+
+/* global check-in popup */
+.checkin-overlay { position: fixed; inset: 0; z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(12, 14, 10, .62); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+.checkin-overlay.show { display: flex; animation: checkinFade .2s ease; }
+.checkin-card { width: 100%; max-width: 400px; max-height: 92vh; overflow-y: auto; background: var(--card); border-radius: 26px; padding: 22px 22px 14px; text-align: center; box-shadow: 0 24px 60px rgba(0, 0, 0, .35); animation: checkinPop .28s cubic-bezier(.2, .9, .3, 1.2); }
+.checkin-card .modal-copy { margin-bottom: 14px; }
+.checkin-badge { display: inline-block; padding: 5px 12px; border-radius: 999px; background: var(--accent-light); color: var(--text); font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
+.checkin-symbol { margin: 0 auto 10px; width: 52px; height: 52px; font-size: 28px; border-radius: 17px; }
+.checkin-actions { display: flex; gap: 10px; margin-top: 4px; }
+.checkin-actions .btn { flex: 1; width: auto; }
+.checkin-later { display: block; width: 100%; margin-top: 6px; padding: 10px; background: none; border: none; color: var(--text2); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+@keyframes checkinFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes checkinPop { from { transform: translateY(14px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+.checkin-card .form-input { background: var(--bg); border: 1px solid var(--border); text-align: center; font-size: 22px; font-weight: 800; padding: 14px; }
+.checkin-card .form-input:focus { border-color: var(--accent); }
+
+.logo-choice img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
+.logo-choice:has(img){padding:0;overflow:hidden;background:#fff}
+
+#file-viewer{position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,.92);display:flex;flex-direction:column}
+#file-viewer .fv-bar{display:flex;align-items:center;gap:12px;padding:14px 16px;color:#fff}
+#file-viewer .fv-title{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#file-viewer .fv-close{border:0;background:rgba(255,255,255,.15);color:#fff;width:38px;height:38px;border-radius:50%;font-size:18px;cursor:pointer}
+#file-viewer .fv-body{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:0 12px 20px;overflow:auto}
+#file-viewer img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px}
+#file-viewer iframe{width:100%;height:100%;border:0;border-radius:10px;background:#fff}
+#file-viewer pre{color:#fff;white-space:pre-wrap;align-self:flex-start;width:100%}
+#file-viewer .fv-none{color:#fff;text-align:center;line-height:2}
+.file-ic{overflow:hidden}.file-thumb{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
+
+.sub-filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 20px 14px}.sub-filters select{min-width:0;width:100%;box-sizing:border-box}.sub-filters select{margin:0;padding:10px 12px}.sub-filters #sub-sort{grid-column:1/-1}
+
+.bt-bar{height:16px;border-radius:9px;background:var(--border);overflow:hidden}.bt-fill{height:100%;background:var(--accent);border-radius:9px;transition:width .3s}.bt-fill.over{background:var(--danger)}
+.bt-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.bt-list{margin-top:12px;border-top:1px solid var(--border)}.bt-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}.bt-row>div:first-child{flex:1;min-width:0}
