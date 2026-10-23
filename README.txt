@@ -35,3 +35,11 @@ V5.2 additions:
 - Decide asks for the normal price on discounts, and the product count and per-product worth on bundles.
 - Decision engine scores each purchase 0-100 using need, importance, how long you've wanted it, affordability, deal quality and credit use.
 - Monthly budget tracker (add purchase / add savings) and spending-trend charts on Insights.
+
+V5.2 follow-up:
+- Monthly budget uses a pencil button (top right) instead of the bottom "Adjust budget" button.
+- Deleting a budget entry asks for confirmation in an in-app popup; trash icons are red.
+- All dropdowns are now in-app bottom sheets instead of the device's native picker.
+- Logos show in the Active Subscriptions and Upcoming Bills popups.
+- Subscription details stay in phone layout on wide screens.
+- Every delete/erase confirmation (budget entry, file, subscription, savings goal, erase all data) now uses the in-app popup; no browser confirm boxes remain.

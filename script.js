@@ -314,13 +314,15 @@ async function hydrateThumbs() {
   }
 }
 async function removeSubFile(subId, fid) {
-  if (!confirm('Remove this file from the subscription?')) return;
   const sub = state.subs.find(s => s.id === subId);
   if (!sub) return;
-  sub.files = (sub.files || []).filter(f => f.id !== fid);
-  try { await fileDel(fid); } catch (e) {}
-  saveState();
-  openDetail(subId);
+  const f = (sub.files || []).find(x => x.id === fid);
+  askConfirm('Remove this file?', `<strong>${esc(f ? f.name : 'This file')}</strong> will be removed from ${esc(sub.name)}. This cannot be undone.`, 'Remove', async () => {
+    sub.files = (sub.files || []).filter(x => x.id !== fid);
+    try { await fileDel(fid); } catch (e) {}
+    saveState();
+    openDetail(subId);
+  });
 }
 
 // ============ NAVIGATION ============
@@ -921,7 +923,8 @@ function changeStatus(id, status) {
 }
 
 function deleteSub(id) {
-  if (confirm('Delete this subscription? This cannot be undone.')) {
+  const s0 = state.subs.find(s => s.id === id);
+  askConfirm('Delete this subscription?', `<strong>${esc(s0 ? s0.name : 'This subscription')}</strong> and its attached files will be removed. This cannot be undone.`, 'Delete', () => {
     const gone = state.subs.find(s => s.id === id);
     (gone && gone.files || []).forEach(f => fileDel(f.id).catch(() => {}));
     state.subs = state.subs.filter(s => s.id !== id);
@@ -929,7 +932,7 @@ function deleteSub(id) {
     closeDetail();
     render();
     showToast('Subscription deleted');
-  }
+  });
 }
 
 function editSub(id) {
@@ -2003,7 +2006,7 @@ function showActiveSubs() {
         const nr = nextRenewal(s);
         return `
           <div class="list-popup-item" onclick="closeListPopup();openDetail('${s.id}')">
-            <div class="lp-icon" style="background:${logoColor}">${s.name.charAt(0).toUpperCase()}</div>
+            ${logoMarkup(s, 'lp-icon')}
             <div class="lp-info">
               <div class="lp-name">${s.name}</div>
               <div class="lp-meta">${s.category} · Renews ${fmtDate(nr)}</div>
@@ -2054,7 +2057,7 @@ function showUpcomingBills() {
         const days = daysUntil(date);
         return `
           <div class="list-popup-item" onclick="closeListPopup();openDetail('${sub.id}')">
-            <div class="lp-icon" style="background:${logoColor}">${sub.name.charAt(0).toUpperCase()}</div>
+            ${logoMarkup(sub, 'lp-icon')}
             <div class="lp-info">
               <div class="lp-name">${sub.name}</div>
               <div class="lp-meta">${fmtDate(date)} · ${days} days ${days <= 7 ? '· <span style="color:var(--warning);font-weight:600">Soon</span>' : ''}</div>
@@ -2186,7 +2189,7 @@ function openSavingsEntryModal(type='saved',goalId='') {const goals=state.saving
 function saveSavingsEntry(){const amount=Number(document.getElementById('se-amount').value),goalId=document.getElementById('se-goal').value,type=document.getElementById('se-type').value,date=savingsEntryDate;if(!Number.isFinite(amount)||amount<=0||!date){showToast('Enter a valid amount and date');return}state.savingsEntries.push({id:uid(),goalId,type,amount,date});saveState();closeModal();renderSavings();showToast(type==='saved'?'Savings recorded':'Spending recorded')}
 function checkSavingsHabit(id){openSavingsCheckin(id)}
 
-function deleteSavingsGoal(id){if(!confirm('Delete this savings goal? Its activity history will remain as general activity.'))return;state.savingsGoals=state.savingsGoals.filter(g=>g.id!==id);state.savingsEntries.forEach(e=>{if(e.goalId===id)e.goalId=''});saveState();renderSavings()}
+function deleteSavingsGoal(id){const g0=state.savingsGoals.find(g=>g.id===id);askConfirm('Delete this savings goal?',`<strong>${esc(g0?g0.name:'This goal')}</strong> will be removed. Its activity history will remain as general activity.`,'Delete',()=>{state.savingsGoals=state.savingsGoals.filter(g=>g.id!==id);state.savingsEntries.forEach(e=>{if(e.goalId===id)e.goalId=''});saveState();renderSavings();showToast('Savings goal deleted')})}
 
 
 // ============ DECIDE -> SAVINGS LINK ============
@@ -2419,13 +2422,13 @@ function saveBudget() {
 }
 
 function eraseData() {
-  if (confirm('Erase all data? This cannot be undone.')) {
+  askConfirm('Erase all data?', 'Every subscription, assessment, savings goal and budget entry will be permanently deleted from this device. This cannot be undone.', 'Erase everything', () => {
     localStorage.removeItem(STORAGE_KEY);
     fileClear().catch(() => {});
     state = defaultState();
     render();
     showToast('All data erased');
-  }
+  });
 }
 
 function openOnboarding() {
@@ -2493,7 +2496,7 @@ function renderBudgetTracker() {
     <div class="bt-bar"><div class="bt-fill${over ? ' over' : ''}" style="width:${pct}%"></div></div>
     <div class="muted-note" style="margin:8px 0 12px">${B ? (over ? `Over budget by ${fmt(used - B)}` : `${fmt(B - used)} left`) : 'Tap Adjust budget to set one.'}${state.settings.budgetIncludesSubs ? ' · includes subscriptions' : ''}${saved ? ` · ${fmt(saved)} saved this month` : ''}</div>
     <div class="bt-actions"><button class="btn btn-secondary" onclick="openBudgetEntry('purchase')">↑ Add purchase</button><button class="btn btn-secondary" onclick="openBudgetEntry('savings')">↓ Add savings</button></div>
-    ${(state.budgetEntries || []).length ? `<div class="bt-list">${state.budgetEntries.slice(-4).reverse().map(e => `<div class="bt-row"><div><strong>${esc(e.note || (e.type === 'purchase' ? 'Purchase' : 'Savings'))}</strong><div class="muted-note">${fmtDate(e.date)}</div></div><div style="font-weight:700;color:${e.type === 'purchase' ? 'var(--danger)' : 'var(--success)'}">${e.type === 'purchase' ? '-' : '+'}${fmt(e.amount)}</div><button class="file-del" onclick="deleteBudgetEntry('${e.id}')" aria-label="Delete">${icon('trash', 16)}</button></div>`).join('')}</div>` : ''}`;
+    ${(state.budgetEntries || []).length ? `<div class="bt-list">${state.budgetEntries.slice(-4).reverse().map(e => `<div class="bt-row"><div><strong>${esc(e.note || (e.type === 'purchase' ? 'Purchase' : 'Savings'))}</strong><div class="muted-note">${fmtDate(e.date)}</div></div><div style="font-weight:700;color:${e.type === 'purchase' ? 'var(--danger)' : 'var(--success)'}">${e.type === 'purchase' ? '-' : '+'}${fmt(e.amount)}</div><button class="file-del bt-del" onclick="deleteBudgetEntry('${e.id}')" aria-label="Delete entry">${icon('trash', 16)}</button></div>`).join('')}</div>` : ''}`;
 }
 let budgetEntryDate = '', budgetEntryType = 'purchase';
 function openBudgetEntry(type) {
@@ -2513,7 +2516,22 @@ function saveBudgetEntry() {
   saveState(); closeModal(); render();
   showToast(budgetEntryType === 'purchase' ? 'Purchase added' : 'Savings added');
 }
-function deleteBudgetEntry(id) { state.budgetEntries = state.budgetEntries.filter(e => e.id !== id); saveState(); render(); }
+let confirmCb = null;
+function askConfirm(title, text, label, cb) {
+  confirmCb = cb;
+  document.getElementById('modal-content').innerHTML = `<div class="modal-handle"></div>
+    <div class="wizard-question">${esc(title)}</div>
+    <p class="modal-copy">${text}</p>
+    <div class="wizard-nav"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-danger" onclick="runConfirm()">${esc(label)}</button></div>`;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+function runConfirm() { const cb = confirmCb; confirmCb = null; closeModal(); if (cb) cb(); }
+function deleteBudgetEntry(id) {
+  const e = (state.budgetEntries || []).find(x => x.id === id); if (!e) return;
+  askConfirm('Delete this entry?', `${e.type === 'purchase' ? 'Purchase' : 'Savings'} of <strong>${fmt(e.amount)}</strong>${e.note ? ' (' + esc(e.note) + ')' : ''} on ${fmtDate(e.date)} will be removed from your budget. This cannot be undone.`, 'Delete', () => {
+    state.budgetEntries = state.budgetEntries.filter(x => x.id !== id); saveState(); render(); showToast('Entry deleted');
+  });
+}
 function renderTrendCharts() {
   const el = document.getElementById('trend-charts'); if (!el) return;
   const entries = state.budgetEntries || [], now = new Date(), months = [];
@@ -2539,3 +2557,36 @@ function renderTrendCharts() {
     <svg viewBox="0 0 300 110" style="width:100%;height:auto" role="img" aria-label="Spending this month">${cline}<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${cx(today)}" cy="${cy(run)}" r="3.5" fill="var(--accent)"/></svg>
     <div class="muted-note">At this pace you will spend about ${fmt(proj)} this month${B ? (proj > B ? `, which is ${fmt(proj - B)} over budget.` : ', which is within budget.') : '.'}</div>`;
 }
+
+
+// ============ IN-APP DROPDOWNS (replace the device's native select popup) ============
+function enhanceSelect(sel) {
+  if (sel.dataset.enh || sel.multiple || sel.size > 1) return;
+  sel.dataset.enh = '1';
+  sel.classList.add('native-hidden');
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'form-input select-btn';
+  b.innerHTML = '<span class="sb-text"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>';
+  sel.insertAdjacentElement('afterend', b);
+  const sync = () => { const o = sel.options[sel.selectedIndex], t = o ? o.text : '', el = b.querySelector('.sb-text'); if (el.textContent !== t) el.textContent = t; };
+  sel._sync = sync; sync();
+  b.onclick = () => openSelectSheet(sel);
+}
+function openSelectSheet(sel) {
+  closeSelectSheet();
+  const label = sel.getAttribute('aria-label') || (sel.closest('.form-group')?.querySelector('.form-label')?.textContent) || 'Choose an option';
+  const o = document.createElement('div');
+  o.id = 'select-sheet'; o.className = 'select-sheet';
+  o.onclick = e => { if (e.target === o) closeSelectSheet(); };
+  o.innerHTML = `<div class="select-card"><div class="modal-handle"></div><div class="wizard-question">${esc(label)}</div><div class="option-list">${Array.from(sel.options).map((op, i) => `<div class="option-item ${i === sel.selectedIndex ? 'selected' : ''}" data-i="${i}">${esc(op.text)}<div class="check">${i === sel.selectedIndex ? icon('check', 14) : ''}</div></div>`).join('')}</div></div>`;
+  o.querySelectorAll('.option-item').forEach(el => el.onclick = () => {
+    sel.selectedIndex = +el.dataset.i; sel._sync();
+    sel.dispatchEvent(new Event('input', { bubbles: true })); sel.dispatchEvent(new Event('change', { bubbles: true }));
+    closeSelectSheet();
+  });
+  document.body.appendChild(o);
+}
+function closeSelectSheet() { document.getElementById('select-sheet')?.remove(); }
+function enhanceAllSelects(root) { (root || document).querySelectorAll('select').forEach(enhanceSelect); }
+new MutationObserver(() => { if (document.querySelector('select:not([data-enh])')) enhanceAllSelects(); }).observe(document.body, { childList: true, subtree: true });
+enhanceAllSelects();
